@@ -40,8 +40,8 @@ model Aluno {
   cpf             String   @unique
   fotoUrl         String?
   turma           String
-  professor       String?
-  horario         String?
+  professor       String
+  horario         String
   valorMensal     Decimal  @db.Decimal(10, 2)
   diaVencimento   Int
   statusMatricula String   @default("ATIVO")

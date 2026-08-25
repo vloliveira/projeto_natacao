@@ -14,8 +14,8 @@ interface CriarAluno {
   nome: string;
   cpf: string;
   turma: string;
-  professor?: string;
-  horario?: string;
+  professor: string;
+  horario: string;
   valorMensal: number;
   diaVencimento: number;
   senha: string;
@@ -52,6 +52,22 @@ export async function buscarAlunos(filtros: FiltrosAlunos) {
     where,
     orderBy: {
       nome: "asc",
+    },
+  });
+}
+
+export async function buscarPorId(id: string) {
+  return prisma.aluno.findUnique({
+    where: {
+      id,
+    },
+  });
+}
+
+export async function buscarPorCpf(cpf: string) {
+  return prisma.aluno.findUnique({
+    where: {
+      cpf,
     },
   });
 }
