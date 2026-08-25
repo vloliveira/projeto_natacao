@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url = env("DATABASE_URL")
+}
+
+enum StatusMensalidade {
+  PENDENTE
+  PAGO
+  ATRASADO
+}
+
+enum Role {
+  ADMIN
+  ALUNO
+}
+
+model Usuario {
+  id        String   @id @default(uuid())
+  cpf       String   @unique
+  senha     String
+  role      Role     @default(ALUNO)
+  createdAt DateTime @default(now())
+
+  aluno Aluno?
+}
+
+model Aluno {
+  id              String   @id @default(uuid())
+  nome            String
+  cpf             String   @unique
+  fotoUrl         String?
+  turma           String
+  professor       String?
+  horario         String?
+  valorMensal     Decimal  @db.Decimal(10, 2)
+  diaVencimento   Int
+  statusMatricula String   @default("ATIVO")
+  createdAt       DateTime @default(now())
+
+  usuarioId String  @unique
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+
+  mensalidades Mensalidade[]
+}
+
+model Mensalidade {
+  id            String            @id @default(uuid())
+  mesReferencia String
+  valor         Decimal           @db.Decimal(10, 2)
+  status        StatusMensalidade @default(PENDENTE)
+  pixCopiaCola  String?           @db.Text
+  qrCodeBase64  String?           @db.Text
+  pagoEm        DateTime?
+
+  alunoId String
+  aluno   Aluno  @relation(fields: [alunoId], references: [id])
+}
