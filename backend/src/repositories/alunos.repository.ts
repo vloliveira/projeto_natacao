@@ -1,4 +1,6 @@
 import { PrismaClient } from "../generated/prisma";
+import type { z } from "zod";
+import { atualizarAlunoSchema } from "../schemas/aluno.schema";
 
 const prisma = new PrismaClient();
 
@@ -90,6 +92,35 @@ export async function criarAluno(dados: CriarAluno) {
           role: "ALUNO",
         },
       },
+    },
+  });
+}
+
+export async function atualizarAluno(
+  id: string,
+  dados: z.infer<typeof atualizarAlunoSchema>,
+) {
+  return prisma.aluno.update({
+    where: {
+      id,
+    },
+    data: {
+      ...(dados.nome !== undefined && { nome: dados.nome }),
+      ...(dados.turma !== undefined && { turma: dados.turma }),
+      ...(dados.professor !== undefined && { professor: dados.professor }),
+      ...(dados.horario !== undefined && { horario: dados.horario }),
+      ...(dados.valorMensal !== undefined && {
+        valorMensal: dados.valorMensal,
+      }),
+      ...(dados.diaVencimento !== undefined && {
+        diaVencimento: dados.diaVencimento,
+      }),
+      ...(dados.statusMatricula !== undefined && {
+        statusMatricula: dados.statusMatricula,
+      }),
+      ...(dados.fotoUrl !== undefined && {
+        fotoUrl: dados.fotoUrl,
+      }),
     },
   });
 }

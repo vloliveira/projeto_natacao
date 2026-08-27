@@ -1,5 +1,11 @@
 import * as alunosRepository from "../repositories/alunos.repository";
-import { criarAlunoSchema, type CriarAluno } from "../schemas/aluno.schema";
+import {
+  criarAlunoSchema,
+  type CriarAluno,
+  atualizarAlunoSchema,
+} from "../schemas/aluno.schema";
+import type { z } from "zod";
+
 interface FiltrosAlunos {
   nome?: string;
   cpf?: string;
@@ -34,4 +40,17 @@ export async function buscarAlunoPorId(id: string) {
   }
 
   return aluno;
+}
+
+export async function atualizarAluno(
+  id: string,
+  dados: z.infer<typeof atualizarAlunoSchema>,
+) {
+  const aluno = await alunosRepository.buscarPorId(id);
+
+  if (!aluno) {
+    throw new Error("Aluno não encontrado");
+  }
+
+  return alunosRepository.atualizarAluno(id, dados);
 }

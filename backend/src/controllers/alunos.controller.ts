@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { ZodError } from "zod";
 import * as alunosService from "../services/alunos.service";
-import { alunoIdSchema } from "../schemas/aluno.schema";
+import { alunoIdSchema, atualizarAlunoSchema } from "../schemas/aluno.schema";
 
 export async function listarAlunos(req: Request, res: Response) {
   try {
@@ -95,6 +95,37 @@ export async function criarAluno(req: Request, res: Response) {
 
     return res.status(500).json({
       mensagem: "Erro interno do servidor",
+    });
+  }
+}
+
+export async function atualizarAluno(req: Request, res: Response) {
+  try {
+    const { id } = alunoIdSchema.parse(req.params);
+
+    const dados = atualizarAlunoSchema.parse(req.body);
+
+    const aluno = await alunosService.atualizarAluno(id, dados);
+
+    return res.json(aluno);
+  } catch (error) {
+    console.error(error);
+
+    if (error instanceof ZodError) {
+      return res.status(400).json({
+        mensagem: "Dados inválidos",
+        erros: error.issues,
+      });
+    }
+
+    if (error instanceof Error && error.message === "Aluno não encontrado") {
+      return res.status(404).json({
+        mensagem: error.message,
+      });
+    }
+
+    return res.status(500).json({
+      mensagem: "Erro ao atualizar aluno",
     });
   }
 }

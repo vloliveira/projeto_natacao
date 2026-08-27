@@ -26,6 +26,17 @@ export const criarAlunoSchema = z.object({
 });
 export type CriarAluno = z.infer<typeof criarAlunoSchema>;
 
+export const atualizarAlunoSchema = z.object({
+  nome: z.string().trim().min(1).optional(),
+  turma: z.string().trim().min(1).optional(),
+  professor: z.string().trim().min(1).optional(),
+  horario: z.string().trim().min(1).optional(),
+  valorMensal: z.number().min(0).optional(),
+  diaVencimento: z.number().int().min(1).max(31).optional(),
+  statusMatricula: z.string().trim().min(1).optional(),
+  fotoUrl: z.string().trim().optional(),
+});
+
 export const alunoIdSchema = z.object({
   id: z.string().uuid("ID do aluno inválido"),
 });
