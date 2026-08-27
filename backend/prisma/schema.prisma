@@ -10,13 +10,17 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 enum StatusMensalidade {
   PENDENTE
   PAGO
-  ATRASADO
+}
+
+enum StatusMatricula {
+  ATIVO
+  AFASTADO
 }
 
 enum Role {
@@ -35,17 +39,18 @@ model Usuario {
 }
 
 model Aluno {
-  id              String   @id @default(uuid())
+  id              String          @id @default(uuid())
   nome            String
-  cpf             String   @unique
+  cpf             String          @unique
   fotoUrl         String?
   turma           String
   professor       String
   horario         String
-  valorMensal     Decimal  @db.Decimal(10, 2)
+  valorMensal     Decimal         @db.Decimal(10, 2)
   diaVencimento   Int
-  statusMatricula String   @default("ATIVO")
-  createdAt       DateTime @default(now())
+  statusMatricula StatusMatricula @default(ATIVO)
+  dataAfastamento DateTime?
+  createdAt       DateTime        @default(now())
 
   usuarioId String  @unique
   usuario   Usuario @relation(fields: [usuarioId], references: [id])
